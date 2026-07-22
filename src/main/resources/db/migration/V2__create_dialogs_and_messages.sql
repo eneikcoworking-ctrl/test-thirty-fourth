@@ -1,5 +1,5 @@
 -- ==========================================
--- Flyway Versioned Migration: V1__create_dialogs_and_messages.sql
+-- Flyway Versioned Migration: V2__create_dialogs_and_messages.sql
 -- Description: Establishes dialogs and messages tables with proper relations, constraints, indexes, and documentation.
 -- Owner: BARCAN-TAG-08 Data Engineering
 -- Data Lineage:

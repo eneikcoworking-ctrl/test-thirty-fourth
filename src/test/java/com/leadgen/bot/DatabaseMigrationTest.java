@@ -13,7 +13,7 @@ import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = LeadGenApplication.class)
 @Transactional
 public class DatabaseMigrationTest {
 
