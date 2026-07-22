@@ -4,3 +4,14 @@
 # Maven target/ directory
 target/
 *.class
+# Maven build outputs
+target/
+*.class
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
