@@ -1,13 +1,17 @@
-package com.example.leadgen;
+package com.leadgen.bot;
 
+import com.leadgen.bot.model.Campaign;
+import com.leadgen.bot.model.CampaignStatus;
+import com.leadgen.bot.model.Lead;
+import com.leadgen.bot.model.LeadStatus;
+import com.leadgen.bot.repository.CampaignRepository;
+import com.leadgen.bot.repository.LeadRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@ActiveProfiles("test")
-public class LeadGenApplicationTests {
+@Transactional
+public class CampaignAndLeadSchemaTest {
 
     @Autowired
     private CampaignRepository campaignRepository;
@@ -25,12 +29,6 @@ public class LeadGenApplicationTests {
     private LeadRepository leadRepository;
 
     @Test
-    public void contextLoads() {
-        // Simple context loading check
-    }
-
-    @Test
-    @Transactional
     public void testCreateAndRetrieveCampaign() {
         Campaign campaign = new Campaign();
         campaign.setName("Telegram Cold Outreach 2026");
@@ -51,7 +49,6 @@ public class LeadGenApplicationTests {
     }
 
     @Test
-    @Transactional
     public void testCreateAndRetrieveLead() {
         Campaign campaign = new Campaign("Campaign A", "System prompt placeholder", CampaignStatus.PAUSED, 15);
         Campaign savedCampaign = campaignRepository.save(campaign);
@@ -68,7 +65,6 @@ public class LeadGenApplicationTests {
     }
 
     @Test
-    @Transactional
     public void testCampaignConstraints_dailyLimitNegative() {
         Campaign campaign = new Campaign("Campaign Invalid", "Prompt", CampaignStatus.ACTIVE, -5);
         // H2 in PostgreSQL compatibility mode will trigger constraint violation on insert/update due to chk_campaign_daily_limit
@@ -78,7 +74,6 @@ public class LeadGenApplicationTests {
     }
 
     @Test
-    @Transactional
     public void testLeadConstraints_uniqueCampaignLead() {
         Campaign campaign = new Campaign("Campaign for Unique", "Prompt", CampaignStatus.ACTIVE, 10);
         Campaign savedCampaign = campaignRepository.save(campaign);

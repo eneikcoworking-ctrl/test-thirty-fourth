@@ -1,4 +1,4 @@
-package com.example.leadgen;
+package com.leadgen.bot.model;
 
 public enum CampaignStatus {
     ACTIVE,

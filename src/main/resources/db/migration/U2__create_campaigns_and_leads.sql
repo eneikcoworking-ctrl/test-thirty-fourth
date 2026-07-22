@@ -1,4 +1,4 @@
--- U1__create_campaigns_and_leads.sql
+-- U2__create_campaigns_and_leads.sql
 -- Drop indexes
 DROP INDEX IF EXISTS idx_leads_status;
 DROP INDEX IF EXISTS idx_leads_campaign_id;

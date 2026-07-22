@@ -1,4 +1,4 @@
-package com.example.leadgen;
+package com.leadgen.bot.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;

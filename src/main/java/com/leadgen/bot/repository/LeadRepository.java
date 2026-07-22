@@ -1,5 +1,8 @@
-package com.example.leadgen;
+package com.leadgen.bot.repository;
 
+import com.leadgen.bot.model.Campaign;
+import com.leadgen.bot.model.Lead;
+import com.leadgen.bot.model.LeadStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
