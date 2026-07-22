@@ -1,0 +1,341 @@
+{
+  "epics": [
+    {
+      "existingEpicId": null,
+      "title": "Telegram Account Session Management",
+      "jtbd": "When scaling outreach campaigns, I want to securely add and manage Telegram accounts with dedicated proxies and human-like delays, so that I can prevent chain bans and maintain a stable sending capacity.",
+      "kanoClass": "Must-Be",
+      "cynefinDomain": "complicated",
+      "sixSigmaMetric": "Reduce account ban rate from baseline to under 5% across new campaigns.",
+      "tocConstraintRef": "Account banning restricts the maximum scale of daily outreach.",
+      "sourceIndex": 0,
+      "requirements": [
+        "R1: Database schema to store Users, TG_Accounts, and proxy configurations.",
+        "R2: Shared API contract for managing accounts and proxies.",
+        "R3: Backend API to add accounts via OTP or .session upload and assign proxies.",
+        "R4: Core Telegram client integration for status monitoring and session authentication.",
+        "R5: Anti-fraud background worker enforcing 120-300s delays, typing imitation, and max 15-20 daily contacts.",
+        "R6: Background warm-up logic for accounts (subscribe, read posts, online presence).",
+        "R7: Frontend UI for operators to add accounts, attach proxies, and view statuses."
+      ],
+      "coverageComplete": true,
+      "slices": [
+        {
+          "title": "Account & Proxy Data Schema",
+          "roleTag": "BARCAN-TAG-08",
+          "jtbd": "When implementing account storage for this epic, I want a structured schema for TG_Accounts and proxies, so that the backend can reliably track session state and limits.",
+          "acceptanceCriteria": "Given a database migration script,\nWhen it is executed,\nThen the TG_Accounts and Users tables are created with proper foreign keys for proxy configuration.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Unreliable session storage prevents horizontal scaling.",
+          "sixSigmaMetric": "Reduce schema drift errors to 0% across environments.",
+          "hasUi": false,
+          "requirementRefs": ["R1"]
+        },
+        {
+          "title": "Account Management API Contract",
+          "roleTag": "BARCAN-TAG-12",
+          "jtbd": "When implementing account management for this epic, I want a defined OpenAPI contract, so that frontend and backend can be developed in parallel without integration mismatches.",
+          "acceptanceCriteria": "Given the API requirements,\nWhen the OpenAPI spec is generated,\nThen it includes endpoints for adding accounts and querying status.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Frontend/backend integration mismatches delay feature delivery.",
+          "sixSigmaMetric": "Reduce API contract breaking changes during integration to 0.",
+          "hasUi": false,
+          "requirementRefs": ["R2"]
+        },
+        {
+          "title": "Core Telegram Auth & Proxy Client",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing Telegram client integration for this epic, I want to authenticate sessions via proxy, so that accounts can securely connect without leaking the host IP.",
+          "acceptanceCriteria": "Given valid OTP or .session data and a proxy,\nWhen the service initializes the client,\nThen a secure connection to Telegram is established via the proxy.",
+          "leanValue": "essential",
+          "cynefinDomain": "complex",
+          "tocConstraintRef": "Direct IP exposure leads to immediate chain bans.",
+          "sixSigmaMetric": "Increase successful proxy-authenticated Telegram sessions to 99.9%.",
+          "hasUi": false,
+          "requirementRefs": ["R4"]
+        },
+        {
+          "title": "Account Management Backend API",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing the backend for this epic, I want REST endpoints for account CRUD, so that the UI can securely add and assign proxies to sessions.",
+          "acceptanceCriteria": "Given a valid API request to add an account,\nWhen the backend processes it,\nThen the account is saved in the DB and auth is triggered.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "Lack of remote management prevents operators from scaling.",
+          "sixSigmaMetric": "Reduce API request latency for account status to <200ms.",
+          "hasUi": false,
+          "requirementRefs": ["R3"]
+        },
+        {
+          "title": "Anti-Fraud & Warm-up Worker",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing the background worker for this epic, I want to enforce random delays, typing status, and daily limits, so that account activity mimics human behavior.",
+          "acceptanceCriteria": "Given an active account,\nWhen the worker runs,\nThen it executes background reads and enforces a 120-300s delay before sending.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "Rhythmic automated actions trigger Telegram spam filters.",
+          "sixSigmaMetric": "Increase human-like behavior compliance to 100% of automated actions.",
+          "hasUi": false,
+          "requirementRefs": ["R5", "R6"]
+        },
+        {
+          "title": "Account Management UI",
+          "roleTag": "BARCAN-TAG-11",
+          "jtbd": "When implementing the frontend for this epic, I want a dashboard to add accounts and view statuses, so that operators can visually manage the account pool.",
+          "acceptanceCriteria": "Given the Svelte admin panel,\nWhen an operator navigates to accounts,\nThen they can upload .session files and view active/banned status.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Manual database entry for accounts blocks operational speed.",
+          "sixSigmaMetric": "Reduce operator time to add a new account to <30 seconds.",
+          "hasUi": true,
+          "requirementRefs": ["R7"]
+        }
+      ]
+    },
+    {
+      "existingEpicId": null,
+      "title": "Outreach Campaign Management",
+      "jtbd": "When launching outreach, I want to import target bases and define spyntax templates, so that the system can automatically rotate accounts and send personalized messages without hitting spam limits.",
+      "kanoClass": "Performance",
+      "cynefinDomain": "complicated",
+      "sixSigmaMetric": "Increase daily successful message delivery volume by 500%.",
+      "tocConstraintRef": "Manual message sending and target tracking limits outreach volume.",
+      "sourceIndex": 0,
+      "requirements": [
+        "R1: Database schema for Campaigns, Contact Bases, and message templates.",
+        "R2: Shared API contract for campaign configuration.",
+        "R3: Backend API to import CSV/TXT contact lists and configure templates.",
+        "R4: Spyntax parser and LLM-based first-sentence personalizer.",
+        "R5: Scheduling engine that handles account rotation and dynamic exponential timeouts.",
+        "R6: Svelte UI for campaign creation, target upload, and template testing."
+      ],
+      "coverageComplete": true,
+      "slices": [
+        {
+          "title": "Campaign Data Schema",
+          "roleTag": "BARCAN-TAG-08",
+          "jtbd": "When implementing campaign storage for this epic, I want structured tables for campaigns and contacts, so that the backend can track target bases and progress.",
+          "acceptanceCriteria": "Given the database,\nWhen the schema migration is applied,\nThen Campaigns and Leads tables are correctly structured.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Lack of structured campaign state prevents automated scheduling.",
+          "sixSigmaMetric": "Reduce schema validation errors during campaign creation to 0.",
+          "hasUi": false,
+          "requirementRefs": ["R1"]
+        },
+        {
+          "title": "Campaign API Contract",
+          "roleTag": "BARCAN-TAG-12",
+          "jtbd": "When implementing campaign logic for this epic, I want an OpenAPI specification, so that frontend and backend teams can integrate seamlessly.",
+          "acceptanceCriteria": "Given the campaign requirements,\nWhen the contract is published,\nThen it includes CSV upload and template definition endpoints.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Integration friction between UI and backend delays launch.",
+          "sixSigmaMetric": "Maintain 100% endpoint backward compatibility during initial dev.",
+          "hasUi": false,
+          "requirementRefs": ["R2"]
+        },
+        {
+          "title": "Campaign Management Backend API",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing the backend for this epic, I want endpoints to upload targets and define spyntax, so that the scheduler has data to process.",
+          "acceptanceCriteria": "Given a valid CSV file of targets,\nWhen uploaded to the API,\nThen the contacts are parsed and stored in the database.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "Manual lead entry limits campaign size.",
+          "sixSigmaMetric": "Reduce CSV parsing and insertion time to <2 seconds for 10k rows.",
+          "hasUi": false,
+          "requirementRefs": ["R3"]
+        },
+        {
+          "title": "Spyntax & Personalization Engine",
+          "roleTag": "BARCAN-TAG-04",
+          "jtbd": "When implementing message generation for this epic, I want a spyntax resolver and LLM personalizer, so that outgoing messages have unique signatures.",
+          "acceptanceCriteria": "Given a template with {A|B},\nWhen the engine processes it,\nThen it outputs a randomly selected variant alongside an LLM-tailored intro.",
+          "leanValue": "valuable",
+          "cynefinDomain": "complex",
+          "tocConstraintRef": "Static message signatures lead to rapid spam filtering.",
+          "sixSigmaMetric": "Increase unique message signature rate to >95% per campaign.",
+          "hasUi": false,
+          "requirementRefs": ["R4"]
+        },
+        {
+          "title": "Campaign Scheduler & Rotation Worker",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing the sender for this epic, I want a worker that rotates accounts and applies exponential timeouts, so that sending continues smoothly despite limits.",
+          "acceptanceCriteria": "Given an account hitting a limit,\nWhen the scheduler runs,\nThen it automatically switches to the next available account in the pool.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "FLOOD_WAIT errors stall entire campaigns without rotation.",
+          "sixSigmaMetric": "Decrease campaign stall time due to account limits to <1 minute.",
+          "hasUi": false,
+          "requirementRefs": ["R5"]
+        },
+        {
+          "title": "Campaign Management UI",
+          "roleTag": "BARCAN-TAG-11",
+          "jtbd": "When implementing the frontend for this epic, I want a campaign dashboard, so that marketers can visually upload contacts and test spyntax.",
+          "acceptanceCriteria": "Given the Svelte dashboard,\nWhen a user configures a campaign,\nThen they can preview the randomized message output.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "CLI-only campaign management prevents non-technical usage.",
+          "sixSigmaMetric": "Reduce campaign setup time for operators to <5 minutes.",
+          "hasUi": true,
+          "requirementRefs": ["R6"]
+        }
+      ]
+    },
+    {
+      "existingEpicId": null,
+      "title": "AI LLM Dialog Engine",
+      "jtbd": "When a target replies, I want an AI assistant to immediately intercept and continue the conversation, so that leads are automatically qualified and objections handled without manual effort.",
+      "kanoClass": "Attractive",
+      "cynefinDomain": "complex",
+      "sixSigmaMetric": "Increase automated lead qualification rate from 0% to >40%.",
+      "tocConstraintRef": "Manual response time to inbound messages causes lead drop-off.",
+      "sourceIndex": 0,
+      "requirements": [
+        "R1: Database schema for Dialogs and Messages (history storage).",
+        "R2: Telegram event listener to capture incoming messages in real-time.",
+        "R3: Context management system to pass the last N messages to the LLM.",
+        "R4: LLM integration (OpenAI/Anthropic) with configurable system prompts.",
+        "R5: Stop-action engine to freeze AI on intent triggers (negative, ready to call) or after 5 replies.",
+        "R6: Shared API contract for AI behavior configuration.",
+        "R7: UI to configure system prompts and rules."
+      ],
+      "coverageComplete": true,
+      "slices": [
+        {
+          "title": "Dialog & Message Data Schema",
+          "roleTag": "BARCAN-TAG-08",
+          "jtbd": "When implementing dialog storage for this epic, I want tables for conversations and messages, so that the AI has persistent context.",
+          "acceptanceCriteria": "Given the database,\nWhen the migration runs,\nThen Dialogs and Messages tables are established with proper relations.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Loss of conversation history prevents AI from answering contextually.",
+          "sixSigmaMetric": "Ensure 100% of processed incoming messages are persisted to DB.",
+          "hasUi": false,
+          "requirementRefs": ["R1"]
+        },
+        {
+          "title": "AI Configuration API Contract",
+          "roleTag": "BARCAN-TAG-12",
+          "jtbd": "When implementing AI configuration for this epic, I want an API specification, so that the frontend can safely configure system prompts.",
+          "acceptanceCriteria": "Given the AI settings requirements,\nWhen the spec is updated,\nThen it includes endpoints for prompt and stop-trigger configuration.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Undefined AI config payloads cause frontend crashes.",
+          "sixSigmaMetric": "Reduce API shape mismatches in AI settings to 0.",
+          "hasUi": false,
+          "requirementRefs": ["R6"]
+        },
+        {
+          "title": "Telegram Inbound Event Listener",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing event capture for this epic, I want to listen for incoming Telegram messages, so that the system can trigger the AI engine.",
+          "acceptanceCriteria": "Given an active session,\nWhen a target replies,\nThen the event listener captures the message and stores it.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "Missed inbound events result in dropped leads.",
+          "sixSigmaMetric": "Reduce event capture latency from Telegram to DB to <500ms.",
+          "hasUi": false,
+          "requirementRefs": ["R2"]
+        },
+        {
+          "title": "LLM Context & Prompt Integration",
+          "roleTag": "BARCAN-TAG-04",
+          "jtbd": "When implementing AI response generation for this epic, I want to feed context to the LLM, so that it generates relevant replies based on the system prompt.",
+          "acceptanceCriteria": "Given a new inbound message,\nWhen passed to the LLM service,\nThen an appropriate response is generated using the last N messages.",
+          "leanValue": "valuable",
+          "cynefinDomain": "complex",
+          "tocConstraintRef": "Lack of contextual memory makes AI responses irrelevant.",
+          "sixSigmaMetric": "Maintain average LLM response generation time under 3 seconds.",
+          "hasUi": false,
+          "requirementRefs": ["R3", "R4"]
+        },
+        {
+          "title": "AI Stop-Action & Intent Engine",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing AI controls for this epic, I want to detect specific intents or reply limits, so that the AI gracefully hands off to a human.",
+          "acceptanceCriteria": "Given a conversation reaching 5 replies,\nWhen the engine evaluates state,\nThen the AI is frozen and status set to 'Awaiting Human'.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "Unbounded AI loops frustrate targets and burn tokens.",
+          "sixSigmaMetric": "Achieve 99% accuracy in freezing AI after max reply limit.",
+          "hasUi": false,
+          "requirementRefs": ["R5"]
+        },
+        {
+          "title": "AI Configuration UI",
+          "roleTag": "BARCAN-TAG-11",
+          "jtbd": "When implementing the frontend for this epic, I want a settings page for the AI, so that operators can adjust the system prompt and stop rules.",
+          "acceptanceCriteria": "Given the admin dashboard,\nWhen a user navigates to AI Settings,\nThen they can edit the system prompt and save it to the backend.",
+          "leanValue": "valuable",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Hardcoded AI prompts require developer time to update.",
+          "sixSigmaMetric": "Reduce prompt update deployment time from hours to instantaneous.",
+          "hasUi": true,
+          "requirementRefs": ["R7"]
+        }
+      ]
+    },
+    {
+      "existingEpicId": null,
+      "title": "Live Chat CRM",
+      "jtbd": "When AI hits its limits, I want a unified CRM interface to monitor and intercept all account dialogues, so that human operators can seamlessly close the deal.",
+      "kanoClass": "Performance",
+      "cynefinDomain": "complicated",
+      "sixSigmaMetric": "Reduce average human response time for intercepted chats to <2 minutes.",
+      "tocConstraintRef": "Scattered Telegram clients make it impossible for sales teams to monitor active leads.",
+      "sourceIndex": 0,
+      "requirements": [
+        "R1: Shared API contract for the Live Chat interface.",
+        "R2: Backend CRM endpoints for unified inbox retrieval and real-time sync.",
+        "R3: Manual override endpoint to disable AI for a specific chat.",
+        "R4: Svelte CRM interface with color-coded dialogue states (AI active, Needs human, Completed, Spam).",
+        "R5: Real-time frontend updates for incoming messages."
+      ],
+      "coverageComplete": true,
+      "slices": [
+        {
+          "title": "Live Chat API Contract",
+          "roleTag": "BARCAN-TAG-12",
+          "jtbd": "When implementing the CRM for this epic, I want a defined API contract, so that real-time messaging structures are agreed upon between frontend and backend.",
+          "acceptanceCriteria": "Given the CRM requirements,\nWhen the contract is published,\nThen it details unified inbox and AI override endpoints.",
+          "leanValue": "essential",
+          "cynefinDomain": "clear",
+          "tocConstraintRef": "Misalignment on message payload structures breaks real-time sync.",
+          "sixSigmaMetric": "Ensure 100% adherence to API contract during CRM integration.",
+          "hasUi": false,
+          "requirementRefs": ["R1"]
+        },
+        {
+          "title": "CRM Backend & AI Override Logic",
+          "roleTag": "BARCAN-TAG-02",
+          "jtbd": "When implementing the CRM backend for this epic, I want unified inbox endpoints and an override toggle, so that operators can fetch chats and disable AI.",
+          "acceptanceCriteria": "Given a human operator sends a message,\nWhen the backend processes it,\nThen the message is sent via Telegram and AI auto-reply is disabled for that chat.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "Simultaneous human and AI replies confuse the target lead.",
+          "sixSigmaMetric": "Reduce AI override latency to <100ms upon human action.",
+          "hasUi": false,
+          "requirementRefs": ["R2", "R3"]
+        },
+        {
+          "title": "Live Chat Svelte UI",
+          "roleTag": "BARCAN-TAG-11",
+          "jtbd": "When implementing the CRM frontend for this epic, I want a color-coded unified inbox, so that operators can easily identify which chats need immediate human attention.",
+          "acceptanceCriteria": "Given the live chat view,\nWhen a dialog state changes to 'Needs human',\nThen it is visually highlighted for the operator.\nGiven an operator types a message,\nWhen sent,\nThen it appears in the chat and triggers the override.",
+          "leanValue": "essential",
+          "cynefinDomain": "complicated",
+          "tocConstraintRef": "Operators missing high-intent leads due to UI clutter.",
+          "sixSigmaMetric": "Decrease operator missed high-intent chats to <1%.",
+          "hasUi": true,
+          "requirementRefs": ["R4", "R5"]
+        }
+      ]
+    }
+  ]
+}
