@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Unified CRM Inbox</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom scrollbar for a cleaner CRM look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #DFE1E6;
+            border-radius: 10px;
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#191c1e",
+                        "secondary": "#bc000a",
+                        "secondary-fixed-dim": "#ffb4aa",
+                        "primary-fixed": "#dae2ff",
+                        "secondary-container": "#e2241f",
+                        "tertiary-container": "#7d5200",
+                        "inverse-surface": "#2e3132",
+                        "on-secondary-fixed": "#410001",
+                        "on-tertiary-fixed-variant": "#624000",
+                        "tertiary-fixed": "#ffddb3",
+                        "background": "#f8f9fb",
+                        "outline-variant": "#c3c6d6",
+                        "inverse-primary": "#b2c5ff",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#ffdad5",
+                        "surface": "#f8f9fb",
+                        "surface-container-highest": "#e1e2e4",
+                        "on-secondary-fixed-variant": "#930005",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-primary-container": "#c4d2ff",
+                        "surface-variant": "#e1e2e4",
+                        "on-primary-fixed": "#001848",
+                        "tertiary": "#5e3c00",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d9dadc",
+                        "inverse-on-surface": "#f0f1f3",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e7e8ea",
+                        "surface-bright": "#f8f9fb",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "on-tertiary-container": "#ffca81",
+                        "tertiary-fixed-dim": "#ffb950",
+                        "primary": "#003d9b",
+                        "outline": "#737685",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f3f4f6",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#291800",
+                        "on-surface-variant": "#434654",
+                        "surface-tint": "#0c56d0",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "on-secondary-container": "#fffbff",
+                        "primary-container": "#0052cc",
+                        "surface-container": "#edeef0",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "base": "4px",
+                        "stack-lg": "24px",
+                        "gutter-mobile": "12px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "timestamp": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-lg": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "timestamp": ["11px", { "lineHeight": "14px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["11px", { "lineHeight": "14px", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-md text-primary sticky top-0 z-50 flex justify-between items-center px-margin-mobile h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">Inbox</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors duration-200">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+</header>
+<main class="px-margin-mobile py-stack-md max-w-2xl mx-auto space-y-stack-sm">
+<!-- Search & Quick Filters (UX Enhancement) -->
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex-shrink-0 px-4 py-1.5 rounded-full bg-primary text-on-primary font-label-lg text-label-lg transition-all shadow-sm">All</button>
+<button class="flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-all border border-outline-variant/30">Unread</button>
+<button class="flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-all border border-outline-variant/30">Needs Action</button>
+<button class="flex-shrink-0 px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-all border border-outline-variant/30">Assigned to Me</button>
+</div>
+<!-- Chat List -->
+<div class="space-y-3 mt-4">
+<!-- High Priority Lead Card -->
+<div class="group relative flex items-start gap-4 p-4 bg-surface-container-lowest rounded-lg border-2 border-secondary shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+<div class="relative flex-shrink-0">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male executive with a warm smile, wearing a charcoal grey suit and a light blue tie. The background is a blurred high-end corporate office with soft natural lighting and a minimalist, blue-toned enterprise color palette. The image is crisp, clean, and exudes corporate authority and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlSZeJHNBqrtNxIbIiH4PG4khiblq1HeBOovztiyEB-HhRiQCBIpIa5nLzWTUBjsco_PWmBjn3EIAuD7oH_pome4AnuiC3bCcUPsEN3UNqe8mVTx5Xj_Lc-qzz4lnp6MTgW2K956DAWARORKdjj6NxflEeWCIjUJOP-dfrFnod8XsXB_C1O_nXEn6tMIZ-pvXzuS5005HUwpiivMIwZTMUVCPxo9YHKyAXM8_mfpvkDp68FZk0zO400hi8k1RtxTBx6wVnXnMo_4M"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-error border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h3 class="font-headline-sm text-headline-sm truncate text-on-surface">Marcus Sterling</h3>
+<span class="font-timestamp text-timestamp text-secondary font-bold">2m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mb-2 italic">"This is unacceptable, I need a refund immediately or I'm calling..."</p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary text-on-secondary font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[14px] mr-1">warning</span>
+                            Human Attention
+                        </span>
+<span class="font-label-md text-label-md text-outline">Subscription Issue</span>
+</div>
+</div>
+</div>
+<!-- AI Handled Lead Card -->
+<div class="group relative flex items-start gap-4 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+<div class="relative flex-shrink-0">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A high-quality portrait of a young professional woman with glasses, wearing a sleek cream-colored blouse. She is looking slightly off-camera with a confident and helpful expression. The setting is a bright, modern creative studio with soft white and light grey tones, perfectly aligning with a premium light-mode UI aesthetic. The lighting is soft and diffused." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvrZXxkMGrKliwlb2RRFPw9jvASQYNHQN_bmd0Nk9OrGwrSK1iNkHxsuSpGvN9x54M8yJoRce1EvEKEWGTxuMPso3NdtxQp891P8cjcmU3tGRghgaLt1JnuBc8wyk8S9HXBLertgVzrzGUTd1iY7nNvSyjFYWTAbdRGytq0l21uJ-WVliCuia9XnAcBP0BHQGM0orh0e0r-aLALGhFC0lrFsj3gizZQTTnMlVqgv6TdAewv9TtxHnzSAHp0jzrao6n_uphLVrkHms"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h3 class="font-headline-sm text-headline-sm truncate text-on-surface">Elena Rodriguez</h3>
+<span class="font-timestamp text-timestamp text-outline">15m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mb-2">"Great, I will check those pricing tiers now. Thanks for the link!"</p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[14px] mr-1">smart_toy</span>
+                            AI Assistant
+                        </span>
+<span class="font-label-md text-label-md text-outline">Sales Inquiry</span>
+</div>
+</div>
+</div>
+<!-- Pending Lead Card -->
+<div class="group relative flex items-start gap-4 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+<div class="relative flex-shrink-0">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A portrait of a senior architect in a black turtleneck, sitting in a modern library with wooden shelves. The lighting is sophisticated, with a warm rim light that highlights his professional demeanor. The image uses a clean, corporate color palette of navy, white, and warm wood tones, creating a sense of reliability and wisdom. High resolution, professional photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQjhmXnzK1ost6VsHvpAAjycDv_iVl83KnJVCYmUt9Ew7GRv005D2GEYCqb16ztrkZRIfCk_1PhX0fyo1_e_G9UiRvx9y1D0HdDxuhJTi0z59iOwduxzhCZrGgphEzH_RC3djsFr9pRekJuSEA6WeoVMiYibB6e4htJOXO01zfPIRKH96VXrxoRqPXD5Gswm9XIcVYve4VcH7b1qOTRN8SMJWak8KHVhb_dSb6NQN0dYyOGFsl42dA_EJpiPrtvOu_NwB8ebYvsWk"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-tertiary-fixed-dim border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h3 class="font-headline-sm text-headline-sm truncate text-on-surface">Dr. Julian Vance</h3>
+<span class="font-timestamp text-timestamp text-outline">42m ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mb-2">"The API documentation seems to be missing the webhooks section..."</p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[14px] mr-1">pending</span>
+                            Pending
+                        </span>
+<span class="font-label-md text-label-md text-outline">Technical Support</span>
+</div>
+</div>
+</div>
+<!-- AI Handled Lead Card 2 -->
+<div class="group relative flex items-start gap-4 p-4 bg-surface-container-lowest rounded-lg border border-outline-variant/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-80">
+<div class="relative flex-shrink-0">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a young entrepreneur with a friendly face, wearing a smart casual linen shirt. The background is a blurred minimalist cafe with clean lines and soft daylight. The color scheme is dominated by airy whites and soft grays with subtle blue accents, matching a modern corporate CRM design language. The mood is calm and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDviU8eFsGf1XHUWiGpYYJ2o4oAAEBHOsoG2GwrcNNhGal0OoH2M5Pi0Uke_KsqFABG1Zg0FBhPnMdHsK40pAW5OCkIlF-b4C3O0klMTBaFlKbGqdCZY7_eLx0S3m5GVaPEt8peA-L9KPx9RXf4P8RIbJyaSsjD2e-yxF1GkbMz36F8H-nMUGav2jmvHbxtcVqomwZ_UJQZbroSkuA8jYYgOuqNX37ubxZDnBv1zKbRA74lzJsVy_RlO1XBNGv1VAvIVqdntgd_axw"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h3 class="font-headline-sm text-headline-sm truncate text-on-surface">Sarah Jenkins</h3>
+<span class="font-timestamp text-timestamp text-outline">1h ago</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mb-2">"Auto-reply: We have received your request and will get back to you shortly."</p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[14px] mr-1">smart_toy</span>
+                            AI Assistant
+                        </span>
+<span class="font-label-md text-label-md text-outline">New Lead</span>
+</div>
+</div>
+</div>
+<!-- High Priority Lead Card 2 -->
+<div class="group relative flex items-start gap-4 p-4 bg-surface-container-lowest rounded-lg border-2 border-secondary shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+<div class="relative flex-shrink-0">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional woman in her 30s with a sharp bob haircut and a dark navy blazer, standing in front of a modern glass skyscraper. The lighting is bright and clear, reflecting a high-stakes business environment. The image uses a palette of navy, silver, and crisp white, aligning with a sophisticated enterprise CRM interface. High-end editorial style photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4bzO2ZAk00yLX-TIsLvoPdkzKVWxLxJpIeoKXaxPjKfrp1gYwTYb-uKAA8b0WbKSQHnOj_0QG6x4E4zM3lZUXdWj0MU0jmYui3-j0pMDnDU-_JHb0lMtrOA6ndye437HFbAAEzont1JdtvJKvSIZnr6-RQjdgML9UW45Uwvh1HO4WBWuFJmmFUERKOV92GjcObTCxnk1u-in_EMKYdjsVj9IwEG7ltvQBVvqkKKkEvvcpOqNcxx_egCLEOYvR1HmZcaX__1K49Tw"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-error border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-center mb-1">
+<h3 class="font-headline-sm text-headline-sm truncate text-on-surface">Linda Wu</h3>
+<span class="font-timestamp text-timestamp text-secondary font-bold">Just now</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mb-2 italic">"Escalating: My server is currently unresponsive. Help needed!"</p>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary text-on-secondary font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[14px] mr-1">warning</span>
+                            Human Attention
+                        </span>
+<span class="font-label-md text-label-md text-outline">Critical Incident</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for New Chat -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-[28px] fill-icon">edit_square</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="bg-surface fixed bottom-0 w-full z-50 border-t border-outline-variant shadow-sm flex justify-around items-center h-20 pb-safe px-2">
+<a class="flex flex-col items-center justify-center text-primary font-semibold" href="#">
+<span class="material-symbols-outlined fill-icon">inbox</span>
+<span class="font-label-md text-label-md">Inbox</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full px-4 py-1 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Customers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full px-4 py-1 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-full px-4 py-1 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<script>
+        // Simple interaction for list items
+        document.querySelectorAll('.cursor-pointer').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.add('bg-surface-container-low');
+                setTimeout(() => {
+                    item.classList.remove('bg-surface-container-low');
+                }, 200);
+            });
+        });
+    </script>
+</body></html>
