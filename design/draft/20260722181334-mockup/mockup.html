@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Configuration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#0b1326",
+                    "primary": "#c0c1ff",
+                    "on-tertiary-container": "#000703",
+                    "surface-variant": "#2d3449",
+                    "primary-fixed": "#e1e0ff",
+                    "on-tertiary": "#003824",
+                    "surface-container-highest": "#2d3449",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "on-primary-container": "#0d0096",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary-fixed": "#0d1c2d",
+                    "surface-dim": "#0b1326",
+                    "surface-container-lowest": "#060e20",
+                    "on-tertiary-fixed": "#002113",
+                    "on-surface": "#dae2fd",
+                    "tertiary-fixed": "#6ffbbe",
+                    "surface-bright": "#31394d",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "surface-container": "#171f33",
+                    "inverse-on-surface": "#283044",
+                    "outline": "#908fa0",
+                    "on-secondary-container": "#a7b6cc",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "on-secondary": "#233143",
+                    "on-background": "#dae2fd",
+                    "outline-variant": "#464554",
+                    "on-secondary-fixed-variant": "#39485a",
+                    "inverse-primary": "#494bd6",
+                    "secondary-fixed": "#d4e4fa",
+                    "surface-container-high": "#222a3d",
+                    "surface-container-low": "#131b2e",
+                    "error": "#ffb4ab",
+                    "on-primary": "#1000a9",
+                    "surface-tint": "#c0c1ff",
+                    "background": "#0b1326",
+                    "on-surface-variant": "#c7c4d7",
+                    "error-container": "#93000a",
+                    "tertiary-container": "#00885d",
+                    "secondary": "#b9c8de",
+                    "on-primary-fixed": "#07006c",
+                    "secondary-fixed-dim": "#b9c8de",
+                    "tertiary": "#4edea3",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-error": "#690005",
+                    "primary-container": "#8083ff",
+                    "inverse-surface": "#dae2fd",
+                    "secondary-container": "#39485a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "24px",
+                    "container-padding-mobile": "16px",
+                    "stack-sm": "8px",
+                    "gutter": "16px",
+                    "container-padding-desktop": "32px",
+                    "unit": "4px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "label-md": ["Geist"],
+                    "headline-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "code-sm": ["Geist"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "display-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #171f33;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #464554;
+            border-radius: 10px;
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            background-color: rgba(11, 19, 38, 0.8);
+        }
+        .ai-gradient-border {
+            position: relative;
+            background: #171f33;
+            border-radius: 0.5rem;
+        }
+        .ai-gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: 0.5rem;
+            padding: 1px;
+            background: linear-gradient(to right, #494bd6, #4edea3);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-body-md antialiased overflow-x-hidden pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-50 glass-header border-b border-outline-variant dark:border-outline-variant">
+<div class="flex items-center justify-between px-container-padding-mobile h-14 w-full">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 duration-100 hover:bg-surface-variant/50 transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">arrow_back</span>
+</button>
+<h1 class="font-headline-sm text-headline-sm font-semibold text-on-surface dark:text-on-surface">AI Configuration</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</div>
+</div>
+</header>
+<main class="px-container-padding-mobile mt-stack-lg space-y-stack-lg max-w-2xl mx-auto">
+<!-- System Prompt Section -->
+<section class="space-y-stack-sm">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[18px]">terminal</span>
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">System Prompt</h2>
+</div>
+<div class="ai-gradient-border overflow-hidden">
+<div class="p-stack-md">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-code-sm text-code-sm h-48 custom-scrollbar resize-none" spellcheck="false">You are a highly capable and precise AI operation assistant. Your primary objective is to process technical configurations with zero-error tolerance. Maintain a professional, concise, and authoritative tone. When providing code or configuration data, ensure all parameters are optimized for high-stakes enterprise environments. If a request is ambiguous, ask for clarification before proceeding.</textarea>
+</div>
+</div>
+<p class="text-[11px] text-outline px-1">This prompt defines the core personality and behavioral constraints of the model.</p>
+</section>
+<!-- Stop Rules Section -->
+<section class="space-y-stack-sm">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[18px]">block</span>
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Stop Rules</h2>
+</div>
+<div class="bg-surface-container border border-outline-variant rounded-xl divide-y divide-outline-variant/30">
+<div class="flex items-center justify-between p-stack-md group">
+<div class="flex items-center gap-3">
+<span class="font-code-sm text-code-sm bg-surface-variant px-2 py-1 rounded text-primary">User:</span>
+<span class="text-body-md text-on-surface">Client Termination</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-stack-md group">
+<div class="flex items-center gap-3">
+<span class="font-code-sm text-code-sm bg-surface-variant px-2 py-1 rounded text-primary">###</span>
+<span class="text-body-md text-on-surface">Section Break</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-stack-md group">
+<div class="flex items-center gap-3">
+<span class="font-code-sm text-code-sm bg-surface-variant px-2 py-1 rounded text-primary">End</span>
+<span class="text-body-md text-on-surface">Final Token</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-outline-variant rounded-xl text-primary font-label-md text-label-md hover:bg-primary/5 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                Add Rule
+            </button>
+</section>
+<!-- Model Parameters Section -->
+<section class="space-y-stack-sm">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-[18px]">tune</span>
+<h2 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Model Parameters</h2>
+</div>
+<div class="space-y-stack-md">
+<!-- Safe Mode Toggle -->
+<div class="flex items-center justify-between p-stack-md bg-surface-container border border-outline-variant rounded-xl">
+<div class="flex flex-col">
+<span class="text-body-lg font-medium text-on-surface">Safe Mode</span>
+<span class="text-[12px] text-on-surface-variant">Enforce enterprise safety filters</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Temperature Slider -->
+<div class="p-stack-md bg-surface-container border border-outline-variant rounded-xl space-y-stack-md">
+<div class="flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-body-lg font-medium text-on-surface">Temperature</span>
+<span class="text-[12px] text-on-surface-variant">Controls randomness of generation</span>
+</div>
+<span class="font-code-sm text-code-sm bg-primary-container/20 text-primary-fixed px-2 py-1 rounded border border-primary/20" id="temp-value">0.72</span>
+</div>
+<input class="w-full h-1.5 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" max="1" min="0" oninput="document.getElementById('temp-value').innerText = this.value" step="0.01" type="range" value="0.72"/>
+<div class="flex justify-between text-[10px] text-outline font-label-md uppercase">
+<span>Precise</span>
+<span>Creative</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Decorative Illustration / Status -->
+<div class="pt-stack-lg pb-10">
+<div class="relative w-full h-32 rounded-2xl overflow-hidden bg-surface-container-low border border-outline-variant/20 flex items-center justify-center">
+
+<div class="relative z-10 flex flex-col items-center text-center px-6">
+<span class="material-symbols-outlined text-tertiary mb-1" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<p class="text-label-md font-label-md text-tertiary-fixed">OPTIMIZED FOR DEPLOYMENT</p>
+<p class="text-[11px] text-on-surface-variant mt-1">Current latency: 24ms • Tokens/sec: 142</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full p-container-padding-mobile bg-surface-dim/90 backdrop-blur-md border-t border-outline-variant z-50">
+<div class="max-w-2xl mx-auto flex gap-4">
+<button class="flex-1 py-4 px-6 bg-primary text-on-primary font-semibold rounded-xl hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-[0.97] shadow-lg shadow-primary/10">
+                Save Changes
+            </button>
+</div>
+</div>
+<!-- BottomNavBar (Hidden but logic requires it if it was a main screen, settings is sub-page so we follow suppression rules) -->
+<script>
+        // Micro-interaction for inputs
+        document.querySelectorAll('textarea').forEach(el => {
+            el.addEventListener('focus', () => {
+                el.closest('.ai-gradient-border').style.boxShadow = '0 0 20px -5px rgba(192, 193, 255, 0.2)';
+            });
+            el.addEventListener('blur', () => {
+                el.closest('.ai-gradient-border').style.boxShadow = 'none';
+            });
+        });
+
+        // Simple Delete Logic for UI demo
+        document.querySelectorAll('button .material-symbols-outlined').forEach(icon => {
+            if (icon.textContent === 'delete') {
+                icon.closest('button').addEventListener('click', function() {
+                    const row = this.closest('.group');
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(20px)';
+                    setTimeout(() => row.remove(), 300);
+                });
+            }
+        });
+    </script>
+</body></html>
