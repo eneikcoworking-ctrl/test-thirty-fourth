@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>AdAnalytix - Campaign Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e2e4",
+                        "surface-container": "#edeef0",
+                        "tertiary": "#7b2600",
+                        "surface-bright": "#f8f9fb",
+                        "secondary-fixed": "#d7e3fb",
+                        "on-primary-container": "#c4d2ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#434654",
+                        "on-primary-fixed": "#001848",
+                        "on-tertiary-fixed-variant": "#812800",
+                        "on-tertiary-fixed": "#380d00",
+                        "background": "#f8f9fb",
+                        "primary-fixed": "#dae2ff",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "on-secondary-container": "#576377",
+                        "surface-dim": "#d9dadc",
+                        "secondary": "#535f73",
+                        "on-error": "#ffffff",
+                        "primary": "#003d9b",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c3c6d6",
+                        "outline": "#737685",
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "surface-container-low": "#f3f4f6",
+                        "inverse-surface": "#2e3132",
+                        "secondary-container": "#d4e0f8",
+                        "inverse-primary": "#b2c5ff",
+                        "on-secondary-fixed-variant": "#3b475b",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ffc6b2",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e7e8ea",
+                        "surface-tint": "#0c56d0",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "secondary-fixed-dim": "#bbc7de",
+                        "primary-container": "#0052cc",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f0f1f3",
+                        "surface": "#f8f9fb",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffdbcf",
+                        "on-surface": "#191c1e",
+                        "tertiary-container": "#a33500",
+                        "surface-variant": "#e1e2e4",
+                        "on-secondary-fixed": "#101c2d",
+                        "on-background": "#191c1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter-mobile": "12px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "base": "4px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-sm": ["Hanken Grotesk"],
+                        "label-caps": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest dark:bg-surface-dim w-full top-0 sticky z-50 border-b border-outline-variant dark:border-outline flex justify-between items-center px-margin-mobile py-sm h-16">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" data-icon="analytics">analytics</span>
+<h1 class="font-headline-md-mobile text-headline-md-mobile font-bold text-primary dark:text-primary-fixed">AdAnalytix</h1>
+</div>
+<button class="hover:bg-surface-container-high transition-colors active:scale-95 transition-transform p-base rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="max-w-4xl mx-auto px-margin-mobile pt-md space-y-lg">
+<!-- High-Level Summary Section -->
+<section class="space-y-sm">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase">Campaign Performance Overview</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-mobile">
+<!-- Sent Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col gap-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant">SENT</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-data-mono text-headline-sm text-primary">124.5k</span>
+<span class="font-body-sm text-on-surface-variant">+12%</span>
+</div>
+<div class="w-full bg-surface-container h-1 mt-base">
+<div class="bg-primary h-1" style="width: 75%"></div>
+</div>
+</div>
+<!-- Opened Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col gap-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant">OPENED</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-data-mono text-headline-sm text-primary">48.2k</span>
+<span class="font-body-sm text-on-surface-variant">38.7%</span>
+</div>
+<div class="w-full bg-surface-container h-1 mt-base">
+<div class="bg-primary h-1" style="width: 38.7%"></div>
+</div>
+</div>
+<!-- CTR Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md flex flex-col gap-xs">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CTR</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-data-mono text-headline-sm text-primary">4.8%</span>
+<span class="font-body-sm text-on-surface-variant">+0.4%</span>
+</div>
+<div class="w-full bg-surface-container h-1 mt-base">
+<div class="bg-primary h-1" style="width: 45%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Upload Section -->
+<section class="space-y-sm">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase">Quick Upload Contacts</h2>
+<div class="bg-surface-container-lowest border-2 border-dashed border-outline-variant hover:border-primary transition-colors p-xl flex flex-col items-center justify-center text-center group cursor-pointer" id="drop-zone">
+<div class="w-16 h-16 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-md group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined !text-[32px]" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="font-headline-sm text-on-surface mb-xs">Import Campaign Contacts</h3>
+<p class="font-body-md text-on-surface-variant mb-lg max-w-sm">
+                    Drag and drop your CSV or XLSX file here, or click to browse your local storage.
+                </p>
+<div class="flex flex-wrap justify-center gap-sm">
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-lg py-sm uppercase tracking-wider hover:opacity-90 active:scale-95 transition-all">
+                        Upload CSV
+                    </button>
+<button class="bg-surface-container-lowest border border-primary text-primary font-label-caps text-label-caps px-lg py-sm uppercase tracking-wider hover:bg-surface-container-low active:scale-95 transition-all">
+                        Download Template
+                    </button>
+</div>
+<p class="font-body-sm text-on-surface-variant mt-md">Max file size: 25MB • Up to 100k records per import</p>
+</div>
+</section>
+<!-- Recent Activity Section -->
+<section class="space-y-sm">
+<div class="flex justify-between items-end">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase">Recent Imports</h2>
+<button class="text-primary font-label-caps text-label-caps hover:underline">VIEW ALL</button>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant divide-y divide-outline-variant">
+<!-- Activity Item 1 -->
+<div class="p-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="description">description</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-on-surface">q4_leads_final.csv</p>
+<p class="font-body-sm text-on-surface-variant">2,450 contacts • 2 mins ago</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="px-sm py-xs bg-[#e8f5e9] text-[#2e7d32] font-label-caps text-[10px] rounded-full uppercase">Live</span>
+<button class="p-xs hover:bg-surface-container rounded-full"><span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span></button>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="p-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="description">description</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-on-surface">marketing_prospects_sept.xlsx</p>
+<p class="font-body-sm text-on-surface-variant">12,800 contacts • 4 hours ago</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="px-sm py-xs bg-[#fff8e1] text-[#f57f17] font-label-caps text-[10px] rounded-full uppercase">Testing</span>
+<button class="p-xs hover:bg-surface-container rounded-full"><span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span></button>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="p-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="description">description</span>
+</div>
+<div>
+<p class="font-body-md font-bold text-on-surface">reactivation_campaign.csv</p>
+<p class="font-body-sm text-on-surface-variant">540 contacts • Yesterday</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<span class="px-sm py-xs bg-surface-container text-on-surface-variant font-label-caps text-[10px] rounded-full uppercase">Paused</span>
+<button class="p-xs hover:bg-surface-container rounded-full"><span class="material-symbols-outlined text-on-surface-variant" data-icon="more_vert">more_vert</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Style Insights (Bonus Visual Polish) -->
+<section class="grid grid-cols-2 gap-gutter-mobile">
+<div class="col-span-2 md:col-span-1 bg-primary text-on-primary p-md flex flex-col justify-between aspect-video md:aspect-auto">
+<div>
+<h3 class="font-label-caps text-label-caps opacity-80 uppercase mb-xs">Smart Forecast</h3>
+<p class="font-headline-sm">Optimizing CTR by +15%</p>
+</div>
+<p class="font-body-sm opacity-90">Our AI recommends rescheduling your 'Summer Blast' campaign to Tuesdays at 10 AM EST for maximum reach.</p>
+</div>
+<div class="col-span-2 md:col-span-1 border border-outline-variant bg-surface-container-lowest p-md aspect-video md:aspect-auto flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase">Engagement Heatmap</h3>
+<span class="material-symbols-outlined text-primary" data-icon="map">map</span>
+</div>
+<div class="h-24 w-full bg-surface-container overflow-hidden relative">
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle, #003d9b 1px, transparent 1px); background-size: 10px 10px;"></div>
+<div class="absolute bottom-2 left-2 right-2 h-12 flex items-end gap-1">
+<div class="flex-1 bg-primary h-[20%]"></div>
+<div class="flex-1 bg-primary h-[40%]"></div>
+<div class="flex-1 bg-primary h-[70%]"></div>
+<div class="flex-1 bg-primary h-[30%]"></div>
+<div class="flex-1 bg-primary h-[90%]"></div>
+<div class="flex-1 bg-primary h-[50%]"></div>
+<div class="flex-1 bg-primary h-[80%]"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 border-t border-outline-variant dark:border-outline flex justify-around items-center h-16 bg-surface-container-lowest dark:bg-surface-dim px-2 pb-safe">
+<!-- Dashboard (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed-dim text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<!-- Contacts -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 hover:bg-surface-container-high transition-colors active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-caps text-label-caps">Contacts</span>
+</a>
+<!-- Testing -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 hover:bg-surface-container-high transition-colors active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="science">science</span>
+<span class="font-label-caps text-label-caps">Testing</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 hover:bg-surface-container-high transition-colors active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+</nav>
+<script>
+        // Simple drag and drop visual feedback
+        const dropZone = document.getElementById('drop-zone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('bg-primary-container', 'border-primary');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('bg-primary-container', 'border-primary');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            console.log('Files dropped:', files[0].name);
+            alert(`File "${files[0].name}" uploaded successfully (Simulated)`);
+        }
+    </script>
+</body></html>
