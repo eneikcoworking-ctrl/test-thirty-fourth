@@ -1,0 +1,647 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CRM Live Chat & AI Override API Contract",
+    "description": "Unified inbox, real-time messaging, and AI override contract for the CRM Live Chat system (LeadGen Bot). This document acts as the single source of truth for the Svelte SvelteKit frontend and Java Spring Boot backend.\n\n### Real-time Messaging (WebSocket/SSE) Contract\nTo ensure real-time messaging synchronization, a WebSocket server is established at `/ws/inbox`. Clients should authenticate via query param `?token=JWT_TOKEN` or cookies.\n\n#### Outbound Events (Server to Client)\n- `message_received`: Triggered when a new message arrives from a contact.\n- `message_sent_success`: Confirmation that an operator message has been successfully broadcast to Telegram.\n- `thread_status_changed`: Fired when a thread's override state shifts (e.g. `ai_assistant` -> `human_attention`).\n- `typing_status`: Emitted when the contact or AI agent is simulated typing.\n\nAll real-time payloads inherit from the `WebSocketEvent` schema outlined in the components below.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/v1/inbox/threads": {
+      "get": {
+        "summary": "Retrieve Chat Threads",
+        "description": "Returns a paginated list of chat threads, representing conversations with Telegram contacts. Supports filtering by handler status and tags.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter threads by handler status.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "human_attention",
+                "ai_assistant",
+                "pending"
+              ]
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": "Filter threads by context tags.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "subscription_issue",
+                "sales_inquiry",
+                "technical_support",
+                "new_lead",
+                "critical_incident"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Fuzzy search by contact name, username, phone, or message content.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of records to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Number of records to skip.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list of chat threads.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "threads",
+                    "totalCount"
+                  ],
+                  "properties": {
+                    "threads": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Thread"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "example": 1284
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inbox/threads/{threadId}/messages": {
+      "get": {
+        "summary": "Retrieve Message History",
+        "description": "Fetches a paginated history of messages in a specific thread.",
+        "parameters": [
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "description": "Cursor for pagination. Retrieve messages older than this message ID.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved message history.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "messages"
+                  ],
+                  "properties": {
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Message"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Thread not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Send Operator Message",
+        "description": "Allows a human operator to send a manual message to the Telegram user. Sending a message via this endpoint must automatically pause the AI Assistant and transition the thread to 'human_attention' status.",
+        "parameters": [
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "The plaintext message body to deliver.",
+                    "example": "Hi Marcus, I see your request and I am reviewing your account right now."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message successfully queued for delivery and saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., empty text body).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Thread not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inbox/threads/{threadId}/override": {
+      "post": {
+        "summary": "Override AI Assistant Handler Mode",
+        "description": "Explicitly switches the handling mode of a thread between the automated LLM Dialog Engine and manual Human operator attention.",
+        "parameters": [
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AiOverrideRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI override mode successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiOverrideResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., invalid mode specified).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Thread not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Contact": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "telegramUsername"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d09228fb-28c0-43ef-bc43-2313bfa7e462"
+          },
+          "name": {
+            "type": "string",
+            "example": "Marcus Sterling"
+          },
+          "telegramUsername": {
+            "type": "string",
+            "example": "marcus_sterling_exec"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+15550199281"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://lh3.googleusercontent.com/aida-public/AB6AXuAlSZeJHNBqrtNxIbIiH4PG4khiblq1HeBOovztiyEB-HhRiQCBIpIa5nLzWTUBjsco_PWmBjn3EIAuD7oH_pome4AnuiC3bCcUPsEN3UNqe8mVTx5Xj_Lc-qzz4lnp6MTgW2K956DAWARORKdjj6NxflEeWCIjUJOP-dfrFnod8XsXB_C1O_nXEn6tMIZ-pvXzuS5005HUwpiivMIwZTMUVCPxo9YHKyAXM8_mfpvkDp68FZk0zO400hi8k1RtxTBx6wVnXnMo_4M"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:00:00Z"
+          }
+        }
+      },
+      "Thread": {
+        "type": "object",
+        "required": [
+          "id",
+          "contact",
+          "status",
+          "unreadCount",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3b290dfc-859a-4c22-b25c-897c55dae002"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "human_attention",
+              "ai_assistant",
+              "pending"
+            ],
+            "example": "human_attention",
+            "description": "Identifies who or what is currently controlling/responding within the thread."
+          },
+          "tag": {
+            "type": "string",
+            "enum": [
+              "subscription_issue",
+              "sales_inquiry",
+              "technical_support",
+              "new_lead",
+              "critical_incident"
+            ],
+            "example": "subscription_issue"
+          },
+          "unreadCount": {
+            "type": "integer",
+            "example": 3
+          },
+          "lastMessage": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:05:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:13:21Z"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "required": [
+          "id",
+          "threadId",
+          "senderType",
+          "text",
+          "timestamp"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f003e8cb-7e2a-466d-88b1-3e47e8f52219"
+          },
+          "threadId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3b290dfc-859a-4c22-b25c-897c55dae002"
+          },
+          "senderType": {
+            "type": "string",
+            "enum": [
+              "contact",
+              "human_operator",
+              "ai_assistant"
+            ],
+            "example": "contact"
+          },
+          "senderName": {
+            "type": "string",
+            "example": "Marcus Sterling",
+            "description": "Name of the sender (either the contact name, operator name, or AI Agent's name)."
+          },
+          "text": {
+            "type": "string",
+            "example": "This is unacceptable, I need a refund immediately or I'm calling..."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:13:21Z"
+          }
+        }
+      },
+      "AiOverrideRequest": {
+        "type": "object",
+        "required": [
+          "handlerMode"
+        ],
+        "properties": {
+          "handlerMode": {
+            "type": "string",
+            "enum": [
+              "human_attention",
+              "ai_assistant",
+              "pending"
+            ],
+            "example": "ai_assistant",
+            "description": "The target handler status to enforce for the chat thread."
+          },
+          "overrideReason": {
+            "type": "string",
+            "example": "Enabling AI automated reply because the customer question is general pricing."
+          }
+        }
+      },
+      "AiOverrideResponse": {
+        "type": "object",
+        "required": [
+          "threadId",
+          "previousStatus",
+          "currentStatus",
+          "updatedAt"
+        ],
+        "properties": {
+          "threadId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3b290dfc-859a-4c22-b25c-897c55dae002"
+          },
+          "previousStatus": {
+            "type": "string",
+            "enum": [
+              "human_attention",
+              "ai_assistant",
+              "pending"
+            ],
+            "example": "human_attention"
+          },
+          "currentStatus": {
+            "type": "string",
+            "enum": [
+              "human_attention",
+              "ai_assistant",
+              "pending"
+            ],
+            "example": "ai_assistant"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:15:00Z"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "errorCode",
+          "message",
+          "timestamp"
+        ],
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "RESOURCE_NOT_FOUND",
+            "description": "High-level machine-readable error classification."
+          },
+          "message": {
+            "type": "string",
+            "example": "Thread with UUID 3b290dfc-859a-4c22-b25c-897c55dae002 was not found."
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Thread look-up failed in database."
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:16:42Z"
+          }
+        }
+      },
+      "WebSocketEvent": {
+        "type": "object",
+        "required": [
+          "event",
+          "timestamp",
+          "payload"
+        ],
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": [
+              "message_received",
+              "message_sent_success",
+              "thread_status_changed",
+              "typing_status"
+            ],
+            "example": "message_received"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:13:22Z"
+          },
+          "payload": {
+            "type": "object",
+            "description": "Detailed body matching the event type.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Message"
+              },
+              {
+                "$ref": "#/components/schemas/AiOverrideResponse"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "threadId",
+                  "isTyping"
+                ],
+                "properties": {
+                  "threadId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "isTyping": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
