@@ -351,6 +351,381 @@
           }
         }
       }
+    },
+    "/api/v1/accounts": {
+      "get": {
+        "summary": "Retrieve Telegram Accounts",
+        "description": "Returns a paginated list of managed Telegram accounts. Supports filtering by state status.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter accounts by status.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "SPAM_BLOCK_TEMP",
+                "BANNED",
+                "REAUTH_REQUIRED"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of records to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Number of records to skip.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved list of Telegram accounts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{accountId}": {
+      "get": {
+        "summary": "Retrieve Account Details",
+        "description": "Fetches details and real-time status of a specific Telegram account by ID.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved account details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TgAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Account Configuration",
+        "description": "Updates proxy assignment and daily limits for a specific Telegram account.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TgAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., invalid proxy or limits).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account or proxy not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Telegram Account",
+        "description": "Gracefully logs out (where possible) and removes a Telegram session and its credentials from the database.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Account successfully disconnected and deleted."
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/otp/request": {
+      "post": {
+        "summary": "Request OTP Verification Code",
+        "description": "Initiates authorization for a Telegram session by requesting an OTP code sent to the given phone number.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP successfully requested and sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpRequestResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., invalid phone format).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/otp/submit": {
+      "post": {
+        "summary": "Submit OTP and Complete Login",
+        "description": "Completes login process for a Telegram session by submitting the received OTP and optional 2FA password.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpSubmitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OTP successfully verified and Telegram account created/logged in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TgAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., expired or incorrect OTP).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/import": {
+      "post": {
+        "summary": "Import Ready-to-Use Sessions",
+        "description": "Allows direct upload of active sessions in .session/tdata JSON/Session format with proxy attachment.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountImportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sessions successfully imported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TgAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., malformed session payload).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict (e.g., phone number or session duplicate).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -639,6 +1014,270 @@
                 }
               }
             ]
+          }
+        }
+      },
+      "Proxy": {
+        "type": "object",
+        "required": [
+          "id",
+          "host",
+          "port",
+          "protocol"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "host": {
+            "type": "string",
+            "example": "192.168.1.100"
+          },
+          "port": {
+            "type": "integer",
+            "example": 1080
+          },
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "SOCKS5",
+              "HTTP"
+            ],
+            "example": "SOCKS5"
+          },
+          "username": {
+            "type": "string",
+            "example": "proxy_user"
+          },
+          "password": {
+            "type": "string",
+            "example": "proxy_password"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:00:00Z"
+          }
+        }
+      },
+      "TgAccount": {
+        "type": "object",
+        "required": [
+          "id",
+          "userId",
+          "phoneNumber",
+          "status",
+          "dailyDialogueLimit",
+          "currentDailyDialoguesCount"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 10
+          },
+          "proxy": {
+            "$ref": "#/components/schemas/Proxy"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+15550199281"
+          },
+          "username": {
+            "type": "string",
+            "example": "marcus_sterling"
+          },
+          "sessionFormat": {
+            "type": "string",
+            "enum": [
+              "SESSION",
+              "TDATA"
+            ],
+            "example": "SESSION"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "SPAM_BLOCK_TEMP",
+              "BANNED",
+              "REAUTH_REQUIRED"
+            ],
+            "example": "ACTIVE",
+            "description": "Current status/state of the Telegram account."
+          },
+          "dailyDialogueLimit": {
+            "type": "integer",
+            "example": 15,
+            "description": "Hard limit on the number of new daily dialogues to avoid spam blocking."
+          },
+          "currentDailyDialoguesCount": {
+            "type": "integer",
+            "example": 4,
+            "description": "Number of dialogues initiated on this account today."
+          },
+          "lastSyncAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2026-07-22T18:05:00Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-22T18:13:21Z"
+          }
+        }
+      },
+      "OtpRequest": {
+        "type": "object",
+        "required": [
+          "phoneNumber"
+        ],
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "example": "+15550199281"
+          },
+          "proxyId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "example": 42
+          }
+        }
+      },
+      "OtpRequestResponse": {
+        "type": "object",
+        "required": [
+          "otpSessionId"
+        ],
+        "properties": {
+          "otpSessionId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "a87fd62e-3601-4be6-a4c3-1ef96b34a123",
+            "description": "UUID referencing this authorization flow/session."
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+15550199281"
+          },
+          "status": {
+            "type": "string",
+            "example": "SENT_OTP"
+          }
+        }
+      },
+      "OtpSubmitRequest": {
+        "type": "object",
+        "required": [
+          "otpSessionId",
+          "code"
+        ],
+        "properties": {
+          "otpSessionId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "a87fd62e-3601-4be6-a4c3-1ef96b34a123"
+          },
+          "code": {
+            "type": "string",
+            "example": "12345",
+            "description": "The OTP code sent via Telegram or SMS."
+          },
+          "password": {
+            "type": "string",
+            "example": "my_two_factor_password",
+            "description": "Optional 2FA password/cloud password if configured for the account."
+          }
+        }
+      },
+      "AccountImportRequest": {
+        "type": "object",
+        "required": [
+          "phoneNumber",
+          "sessionFormat",
+          "sessionData"
+        ],
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "example": "+15550199281"
+          },
+          "sessionFormat": {
+            "type": "string",
+            "enum": [
+              "SESSION",
+              "TDATA"
+            ],
+            "example": "SESSION"
+          },
+          "sessionData": {
+            "type": "string",
+            "example": "base64_or_hex_or_json_string_of_session",
+            "description": "Serialized tdata/session payload"
+          },
+          "proxyId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "example": 42
+          },
+          "dailyDialogueLimit": {
+            "type": "integer",
+            "example": 15
+          }
+        }
+      },
+      "AccountUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "proxyId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "example": 42
+          },
+          "dailyDialogueLimit": {
+            "type": "integer",
+            "example": 20
+          }
+        }
+      },
+      "AccountListResponse": {
+        "type": "object",
+        "required": [
+          "accounts",
+          "totalCount"
+        ],
+        "properties": {
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TgAccount"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "example": 5
           }
         }
       }
