@@ -5,9 +5,9 @@
       "verdict": "approve",
       "criticalReason": "",
       "concerns": [
-        "In InboxService.sendOperatorMessage, the method comments state that the operator message would normally be published to a Telegram queue or gateway, but the current implementation lacks the actual dispatch integration logic.",
-        "InboxService.getThreads maps Thread entities to ThreadDto, retrieving the latest message for each thread individually via messageRepository.findLatestMessage. This can lead to an N+1 query issue for large numbers of threads, which could be optimized using a join-fetch or a custom query.",
-        "Thread status is managed as a raw String ('human_attention', 'ai_assistant', 'pending') instead of a strongly-typed Enum, which reduces compile-time type safety."
+        "The mock initial thread and message seed data are directly declared inside the Svelte component (App.svelte). Separating them into a dedicated JSON or mock store file would improve component maintainability and readability.",
+        "The `fetchApi` function falls back silently to simulation on any fetch failure. While excellent for robustness and development mode, logging details or showing a subtle UI warning when actual backend requests fail would improve operator and developer troubleshooting.",
+        "The simulated WebSocket connection is initialized on mount and schedules a hardcoded timeout (15 seconds) to trigger simulated messages. In production and higher environments, this logic should be disabled or separated under a distinct development/simulation flag to avoid unexpected behavior."
       ]
     }
   ]
